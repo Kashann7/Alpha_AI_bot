@@ -1,13 +1,13 @@
 "use client"
 
 import type React from "react"
-
 import { createContext, useContext, useEffect, useState } from "react"
 
 interface User {
   id: string
   name: string
   email: string
+  isDemo?: boolean
 }
 
 interface AuthContextType {
@@ -24,33 +24,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
-    const userData = localStorage.getItem("user")
+    try {
+      const token = localStorage.getItem("token")
+      const userData = localStorage.getItem("user")
 
-    if (token && userData) {
-      try {
+      if (token && userData) {
         const parsedUser = JSON.parse(userData)
-        setUser(parsedUser)
-        console.log("User loaded from localStorage:", parsedUser)
-      } catch (error) {
-        console.error("Error parsing user data:", error)
-        localStorage.removeItem("token")
-        localStorage.removeItem("user")
+        if (parsedUser && typeof parsedUser === "object") {
+          setUser(parsedUser)
+          console.log("User loaded from localStorage:", parsedUser)
+        }
       }
+    } catch (error) {
+      console.error("Error loading user data:", error)
+      localStorage.removeItem("token")
+      localStorage.removeItem("user")
+    } finally {
+      setIsLoading(false)
     }
-    setIsLoading(false)
   }, [])
 
   const login = (token: string, userData: User) => {
-    localStorage.setItem("token", token)
-    localStorage.setItem("user", JSON.stringify(userData))
-    setUser(userData)
+    try {
+      localStorage.setItem("token", token)
+      localStorage.setItem("user", JSON.stringify(userData))
+      setUser(userData)
+    } catch (error) {
+      console.error("Error saving user data:", error)
+    }
   }
 
   const logout = () => {
-    localStorage.removeItem("token")
-    localStorage.removeItem("user")
-    setUser(null)
+    try {
+      localStorage.removeItem("token")
+      localStorage.removeItem("user")
+      setUser(null)
+    } catch (error) {
+      console.error("Error during logout:", error)
+    }
   }
 
   return <AuthContext.Provider value={{ user, isLoading, login, logout }}>{children}</AuthContext.Provider>

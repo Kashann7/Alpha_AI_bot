@@ -9,8 +9,8 @@ import { AuthProvider } from "@/components/auth-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "AI Chat SaaS - Intelligent Assistant Platform",
-  description: "AI-powered chat interface for intelligent assistance",
+  title: "Alpha AI Bot - Next-Gen AI Assistant",
+  description: "Experience the future of AI interaction with advanced neural networks and quantum security",
     generator: 'v0.dev'
 }
 
@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
           <AuthProvider>
             {children}
             <Toaster />
